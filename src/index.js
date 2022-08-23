@@ -1,7 +1,7 @@
 import './css/styles.css';
 import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
-import {fetchCountries} from './fetchCountries';
+import {fetchCountries} from './fetchAPI/fetchCountries';
 import counties from './templates/counties.hbs';
 import listOfCountries from './templates/listOfCountries.hbs';
 const refs = {
@@ -21,12 +21,12 @@ function onInputChange(event){
 
     fetchCountries(event.target.value.trim()).then(data => {
         if(data.length > 10){
-            Notiflix.Notify.info("Too many matches found. Please enter a more specific name."),{
-                position: 'center-top',
-                timeout: 2000, 
-                cssAnimationStyle: 'from-top',
-                fontAwesomeIconStyle: 'shadow',    
-            };
+            Notiflix.Notify.info("Too many matches found. Please enter a more specific name.", {
+            position: 'center-top',
+            timeout: 2000, 
+            cssAnimationStyle: 'from-top',
+            fontAwesomeIconStyle: 'shadow',
+        });
             return;
         };
 
@@ -43,13 +43,12 @@ function onInputChange(event){
             return;
         };
 
-        if(!data.status === 200 || data.status === 404){
-            throw new Error(
-                Notiflix.Notify.failure("Oops, there is no country with that name"),{
+        if(data.status === 404){
+            Notiflix.Notify.failure("Oops, there is no country with that name", {
                 position: 'center-top',
                 timeout: 2000, 
                 cssAnimationStyle: 'from-top',
-                fontAwesomeIconStyle: 'shadow',    
+                fontAwesomeIconStyle: 'shadow',
             });
         };
     });
